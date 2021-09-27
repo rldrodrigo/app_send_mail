@@ -42,7 +42,7 @@ $mensagem->__set('assunto', $_POST['assunto']);
 $mensagem->__set('mensagem', $_POST['mensagem']);
 
 
-//print_r($mensagemif);
+
 if (!$mensagem->mensagemValida()) {
     echo 'Mensagem não é válida';
 }
@@ -56,14 +56,18 @@ try {
     $mail->isSMTP();                                            //Send using SMTP
     $mail->Host       = 'smtp.gmail.com';                       //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+
+    //Configura o email
     $mail->Username   = 'email';         //SMTP username
     $mail->Password   = 'senha';                          //SMTP password
+
+
     $mail->SMTPSecure = 'tls';                                  //Enable implicit TLS encryption
     $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
     //Recipients
-    $mail->setFrom('email', 'Rodrigo Lima Remetente');           //Email do Remetente
-    $mail->addAddress('email', 'Rodrigo Lima Destinatario');     //Email do Destinatário
+    $mail->setFrom('rldrodrigo.contato@gmail.com', 'Rodrigo Lima Remetente');           //Email do Remetente
+    $mail->addAddress($mensagem->__get('para'));     //Email do Destinatário
     //$mail->addAddress('ellen@example.com');        //Define mais destinatários     //Name is optional
     //$mail->addReplyTo('info@example.com', 'Information');   //Define o email padrão para quando responderem
     //$mail->addCC('cc@example.com');       
@@ -75,12 +79,12 @@ try {
 
     //Content
     $mail->isHTML(true);                                  //Set email format to HTML
-    $mail->Subject = 'Oi, este é o assunto';
-    $mail->Body    = 'Oi. este é o conteúdo do <strong> e-mail </strong>'; //Usado para client com renderização HTML
-    $mail->AltBody = 'Oi. este é o conteúdo do e-mail ';
+    $mail->Subject = $mensagem->__get('assunto'); //Assunto
+    $mail->Body    = $mensagem->__get('mensagem'); //Usado para client com renderização HTML
+    $mail->AltBody = 'É necessário utilizar um client que suporte HTML para ter acesso total ao conteúdo dessa mensagem.';
 
     $mail->send();
-    echo 'Mensagem enviada';
+    echo 'E-mail enviado com sucesso!';
 } catch (Exception $e) {
     echo "Não foi possível enviar este e-mail, por favor tente novamente mais tarde. Detalhes do Erro: {$mail->ErrorInfo}";
 }
